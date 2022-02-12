@@ -12,4 +12,10 @@ db  = SQLAlchemy(app)
 api = Api(app)
 bcrypt = Bcrypt(app)
 
+
+from app.users import *
+from app.cart import *
 from app.models import *
+
+def create_db():
+    db.create_all()

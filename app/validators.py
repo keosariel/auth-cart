@@ -28,6 +28,5 @@ class SignupValidator(JSONValidator):
 
 class CartItemValidator(JSONValidator):
     validators = {
-        "cart_id" : StringValidator(nullable=False),
         "item_id" : StringValidator(nullable=False)
     }

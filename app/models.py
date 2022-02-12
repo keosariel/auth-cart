@@ -1,16 +1,14 @@
-from app         import db, bcrypt, login_manager
+from app         import db, bcrypt
 from datetime    import datetime, timedelta
 from flask_login import UserMixin
 from hashlib import md5
+from flask import current_app
+import jwt
 
 import json
 
 def get_public_id(unique_id):
     return md5(str(unique_id).encode("UTF-8")).hexdigest()
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 class User(db.Model, UserMixin):
     __tablename__  = 'user'
@@ -32,12 +30,11 @@ class User(db.Model, UserMixin):
     
     carts   = db.relationship('Cart', order_by='Cart.id', backref='user', lazy=True)
 
-    def __init__(self, firstname, lastname, username, email, password):
+    def __init__(self, firstname, lastname, username, email):
         self.firstname = firstname
         self.lastname  = lastname
         self.username  = username
         self.email     = email
-        self.set_password(password)
         
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode()
@@ -51,10 +48,62 @@ class User(db.Model, UserMixin):
     def set_public_id(self):
         self.public_id = get_public_id("user_"+str(self.id))
         self.save()
+    
+    def to_dict(self):
+        return {
+            "id": self.public_id,
+            "firstname": self.firstname,
+            "lastname": self.lastname,
+            "username": self.username,
+            "email": self.email
+        }
         
     def save(self):
         db.session.add(self)
         db.session.commit()
+    
+    def generate_token(self):
+        """Generates the access token"""
+
+        try:
+            # set up a payload with an expiration time
+            payload = {
+                'exp': datetime.utcnow() + timedelta(hours=672),
+                'iat': datetime.utcnow(),
+                'sub': self.id
+            }
+            # create the byte string token using the payload and the SECRET key
+            jwt_string = jwt.encode(
+                payload,
+                current_app.config.get('SECRET_KEY'),
+                algorithm='HS256'
+            )
+
+            if type(jwt_string) == bytes:
+                jwt_string = jwt_string.decode()
+
+            return jwt_string
+
+        except Exception as e:
+            # return an error in string format if an exception occurs
+            return str(e)
+
+    @staticmethod
+    def decode_token(token):
+        """Decodes the access token from the Authorization header."""
+        try:
+            # try to decode the token using our SECRET variable
+            payload = jwt.decode(token, current_app.config.get('SECRET_KEY'), algorithms=['HS256'])
+            return True, payload['sub']
+        except jwt.ExpiredSignatureError:
+            # the token is expired, return an error string
+            return False, "Expired token. Please login to get a new token"
+        except jwt.InvalidTokenError:
+            # the token is invalid, return an error string
+            return False, "Invalid token. Please register or login"
+
+        return False, "Invalid token. Please register or login"
+
 
 
 class Cart(db.Model):
@@ -84,8 +133,7 @@ class Cart(db.Model):
         return {
             "id": self.public_id,
             "count": len(self.items),
-            "items": [ i.to_dict() for i in self.items ],
-            "created": self.created_at
+            "items": [ i.to_dict() for i in self.items ]
         }
         
     def save(self):
@@ -124,10 +172,9 @@ class CartItem(db.Model):
         
     def to_dict(self):
         return {
-            "id": self.id,
+            "id": self.public_id,
             "unique_id": self.unique_id,
-            "cart_id": self.cart.id,
-            "added": self.created_at
+            "cart_id": self.cart.public_id
         }
 
     def save(self):

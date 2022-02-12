@@ -52,26 +52,5 @@ def JSONResponse(data=None, message=None, code=None, status=200):
 	else:
 		return data
 
-def add_view(request, post, current_user):
-	ip_addr = request.remote_addr
-
-	if ip_addr:
-		view = View.query.filter_by(
-			ip_addr=ip_addr,
-			post_id=post.id
-		).first()
-
-		if not view:
-			view = View(
-				ip_addr=ip_addr,
-				user_id=current_user.id if current_user else None,
-				post_id=post.id
-			)
-
-			view.save()
-			view.set_public_id()
-
 def get_public_id(unique_id):
 	return md5(str(unique_id).encode("UTF-8")).hexdigest()
-
-from app.models import View

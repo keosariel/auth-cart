@@ -35,7 +35,8 @@ class _Cart(Resource):
         
         if cart:
             item = CartItem(json_data.item_id, cart.id)
-        
+            item.save()
+            item.set_public_id()
             return JSONResponse(item.to_dict())
         else:
             return JSONResponse(None, code=None, status=404)

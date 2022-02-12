@@ -72,8 +72,8 @@ class SignUp(Resource):
 		"""
 		# print(json_data.username, json_data.password)
 		with current_app.app_context():
-      		firstname = json_data.firstname.lower().strip()
-        	lastname = json_data.lastname.lower().strip()
+			firstname = json_data.firstname.lower().strip()
+			lastname = json_data.lastname.lower().strip()
 			username = json_data.username.lower().strip()
 			email    = json_data.email.strip()
 			password = json_data.password
