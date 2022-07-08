@@ -2,9 +2,12 @@ gunicorn==19.9.0
 Werkzeug==0.16.1
 SQLAlchemy==1.2.13
 Flask_SQLAlchemy==2.3.2
+Flask_Login==0.4.1
 Flask_Bcrypt==0.7.1
 requests
 Pillow==9.0.1
 Flask==1.1.4
 markupsafe==2.0.1
+Pyjwt
 flask_restful
+flask_jsonvalidator

@@ -15,8 +15,10 @@ class _Cart(Resource):
         cart = None
         
         cart = Cart.query.filter_by(public_id=public_id).first()
+        if cart:
+            return JSONResponse(cart.to_dict())
         
-        return JSONResponse(cart.to_dict())
+        return JSONResponse(None, code=None, status=404)
             
     @login_required()
     def post(self, current_user):	
