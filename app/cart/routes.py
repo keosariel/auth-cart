@@ -7,7 +7,7 @@ from app.utils.functions import JSONResponse
 from app.utils.decorators import args_check, login_required
 from app.validators import CartItemValidator
 from app.models import Cart, CartItem
-from app.error_codes import E101, E102, E103
+from app.error_codes import E101, E102, E103, E105
 
 class _Cart(Resource):
     
@@ -16,8 +16,9 @@ class _Cart(Resource):
         
         cart = Cart.query.filter_by(public_id=public_id).first()
         if cart:
-            return JSONResponse(cart.to_dict())
-        
+            if not cart.deleted:
+                return JSONResponse(cart.to_dict())
+
         return JSONResponse(None, code=None, status=404)
             
     @login_required()
@@ -42,3 +43,31 @@ class _Cart(Resource):
             return JSONResponse(item.to_dict())
         else:
             return JSONResponse(None, code=None, status=404)
+    
+    @login_required()
+    def delete(self, public_id, current_user):	
+        cart = Cart.query.filter_by(public_id=public_id).first()
+        
+        if cart:
+            cart.deleted = True
+            cart.save()
+            return JSONResponse(None, code=None, status=201)
+        else:
+            return JSONResponse(None, code=None, status=404)
+
+
+class Checkout(Resource):
+    
+    @login_required()
+    def get(self, current_user):	
+        carts = Cart.query.filter_by(user_id=current_user.id).all()
+        return JSONResponse(carts)
+            
+    @login_required()
+    def post(self, public_id, current_user):	
+        cart = Cart.query.filter_by(public_id=public_id).first()
+        if cart.user_id == current_user.id:
+            cart.checkedout = True
+            return JSONResponse(cart.to_dict())
+        
+        return JSONResponse(None, code=E105, status=406)
