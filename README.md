@@ -13,6 +13,8 @@ password | ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$
 
 **Method**: `POST`
 
+**Headers** `Authorization`
+
 Fields | type | required
 -------|------|---------
 firstname | string (name-regex) | required
@@ -29,6 +31,8 @@ password | string (password-regex) | required
 
 **Method**: `POST`
 
+**Headers** `Authorization`
+
 Fields | type | required
 -------|------|---------
 email | string | required
@@ -42,6 +46,8 @@ password | string | required
 
 **Method**: `POST`
 
+**Headers** `Authorization`
+
 -----
 
 #### Add item to cart
@@ -49,6 +55,32 @@ password | string | required
 **Route**: `/carts/<string:public_id>`
 
 **Method**: `POST`
+
+**Headers** `Authorization`
+
+Fields | type | required
+-------|------|---------
+item_id | string | required
+
+
+#### Get User Checkedout Cart
+
+
+**Route**: `/carts/checkedout`
+
+**Method**: `GET`
+
+**Headers** `Authorization`
+
+
+#### Checkout Cart
+
+
+**Route**: `/carts/checkedout/<string:public_id>`
+
+**Method**: `POST`
+
+**Headers** `Authorization`
 
 Fields | type | required
 -------|------|---------
