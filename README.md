@@ -62,9 +62,9 @@ Fields | type | required
 -------|------|---------
 item_id | string | required
 
+-----
 
 #### Get User Checkedout Cart
-
 
 **Route**: `/carts/checkedout`
 
@@ -72,9 +72,9 @@ item_id | string | required
 
 **Headers** `Authorization`
 
+-----
 
 #### Checkout Cart
-
 
 **Route**: `/carts/checkedout/<string:public_id>`
 
