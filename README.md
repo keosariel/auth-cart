@@ -1,46 +1,46 @@
 #### Field Validation
 
-field | regex
-------|------
-name | ^[a-zA-Z]{2,15}$
-username | ^[a-z0-9_]{3,15}$
-email | [^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+
-password | ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$
+| field    | regex                                                             |
+| -------- | ----------------------------------------------------------------- |
+| name     | ^[a-zA-Z]{2,15}$                                                  |
+| username | ^[a-z0-9_]{3,15}$                                                 |
+| email    | [^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+                           |
+| password | ^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$ |
 
 #### Signup
 
-**Route**: `/auth/signp`
+**Route**: `/auth/signup`
 
 **Method**: `POST`
 
 **Headers** `Authorization`
 
-Fields | type | required
--------|------|---------
-firstname | string (name-regex) | required
-lastname | string (name-regex) | required
-username | string (username-regex) | required
-email | string (email-regex) | required
-password | string (password-regex) | required
+| Fields    | type                    | required |
+| --------- | ----------------------- | -------- |
+| firstname | string (name-regex)     | required |
+| lastname  | string (name-regex)     | required |
+| username  | string (username-regex) | required |
+| email     | string (email-regex)    | required |
+| password  | string (password-regex) | required |
 
------
+---
 
 #### Login
 
-**Route**: `/auth/signp`
+**Route**: `/auth/login`
 
 **Method**: `POST`
 
 **Headers** `Authorization`
 
-Fields | type | required
--------|------|---------
-email | string | required
-password | string | required
+| Fields   | type   | required |
+| -------- | ------ | -------- |
+| email    | string | required |
+| password | string | required |
 
------
+---
 
-#### Create carts
+#### Create carts for new session
 
 **Route**: `/carts`
 
@@ -48,23 +48,37 @@ password | string | required
 
 **Headers** `Authorization`
 
------
+---
 
 #### Add item to cart
 
-**Route**: `/carts/<string:public_id>`
+**Route**: `/carts/<string:cart_public_id>`
 
 **Method**: `POST`
 
 **Headers** `Authorization`
 
-Fields | type | required
--------|------|---------
-item_id | string | required
+| Fields  | type   | required |
+| ------- | ------ | -------- |
+| item_id | string | required |
 
------
+
+
+#### Delete cart
+
+**Route**: `/carts/<`string:cart_public_id `>`
+
+**Method**: `POST`
+
+**Headers** `Authorization`
+
+---
 
 #### Get User Checkedout Cart
+
+In situations where a user has paid for cart items, a checkout `post` request should be made to the carts id `cart_public_id` i.e POST => ``/carts/checkedout/[string:cart_public_id](string:cart_public_id) .``
+
+This request gets checkedout carts, in other words carts that has been paid for.
 
 **Route**: `/carts/checkedout`
 
@@ -72,16 +86,12 @@ item_id | string | required
 
 **Headers** `Authorization`
 
------
+---
 
-#### Checkout Cart
+#### Checkout a Cart
 
-**Route**: `/carts/checkedout/<string:public_id>`
+**Route**: `/carts/checkedout/<string:cart_public_id>`
 
 **Method**: `POST`
 
 **Headers** `Authorization`
-
-Fields | type | required
--------|------|---------
-item_id | string | required

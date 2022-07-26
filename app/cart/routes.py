@@ -60,7 +60,7 @@ class Checkout(Resource):
     
     @login_required()
     def get(self, current_user):	
-        carts = Cart.query.filter_by(user_id=current_user.id).all()
+        carts = Cart.query.filter_by(user_id=current_user.id, checkedout=True).all()
         return JSONResponse(carts)
             
     @login_required()
