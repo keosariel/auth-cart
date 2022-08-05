@@ -11,3 +11,4 @@ markupsafe==2.0.1
 Pyjwt
 flask_restful
 flask_jsonvalidator
+flask-cors
