@@ -1,3 +1,12 @@
+#### Response Data
+
+| field   | description                                            |
+| ------- | ------------------------------------------------------ |
+| code    | API status code i.e E104                               |
+| status  | HTTPS status code 200                                  |
+| message | Insights on the current `code` is there was an error |
+| data    | request data                                          |
+
 #### Field Validation
 
 | field    | regex                                                             |
@@ -61,8 +70,6 @@
 | Fields  | type   | required |
 | ------- | ------ | -------- |
 | item_id | string | required |
-
-
 
 #### Delete cart
 
