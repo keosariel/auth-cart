@@ -27,8 +27,6 @@ class _Cart(Resource):
         
         cart = Cart(current_user.id)
         cart.save()
-        cart.set_public_id()
-        
         return JSONResponse(cart.to_dict())
             
     @login_required()
@@ -39,19 +37,19 @@ class _Cart(Resource):
         if cart:
             item = CartItem(json_data.item_id, cart.id)
             item.save()
-            item.set_public_id()
             return JSONResponse(item.to_dict())
         else:
             return JSONResponse(None, code=None, status=404)
     
     @login_required()
-    def delete(self, public_id, current_user):	
+    @args_check(CartItemValidator())
+    def delete(self, json_data, public_id, current_user):	
         cart = Cart.query.filter_by(public_id=public_id).first()
         
         if cart:
-            cart.deleted = True
+            cart.delete_item(json_data.item_id)
             cart.save()
-            return JSONResponse(None, code=None, status=201)
+            return JSONResponse(cart.to_dict(), code=None, status=201)
         else:
             return JSONResponse(None, code=None, status=404)
 

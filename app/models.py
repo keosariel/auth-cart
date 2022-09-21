@@ -3,6 +3,7 @@ from datetime    import datetime, timedelta
 from flask_login import UserMixin
 from hashlib import md5
 from flask import current_app
+import uuid
 import jwt
 
 import json
@@ -35,6 +36,7 @@ class User(db.Model, UserMixin):
         self.lastname  = lastname
         self.username  = username
         self.email     = email
+        self.public_id = str(uuid.uuid4())
         
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode()
@@ -44,10 +46,6 @@ class User(db.Model, UserMixin):
         Checks the password against it's hash to validates the user's password
         """
         return bcrypt.check_password_hash(self.password, password)
-    
-    def set_public_id(self):
-        self.public_id = get_public_id("user_"+str(self.id))
-        self.save()
     
     def to_dict(self):
         return {
@@ -126,18 +124,24 @@ class Cart(db.Model):
 
     def __init__(self, user_id):
         self.user_id  = user_id
-        
-    def set_public_id(self):
-        self.public_id = get_public_id("cart_"+str(self.id))
-        self.save()
+        self.public_id = str(uuid.uuid4())
         
     def to_dict(self):
+        items = [i for i in self.items if not i.deleted]
         return {
             "id": self.public_id,
-            "count": len(self.items),
-            "items": [ i.to_dict() for i in self.items ]
+            "count": len(items),
+            "items": [ i.to_dict() for i in items ]
         }
-        
+    
+    def delete_item(self, item_id):
+        items = [i for i in self.items if not i.deleted]
+
+        for i in items:
+            if i.unique_id == item_id:
+                i.deleted = True
+                i.save()
+                return True 
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -164,20 +168,23 @@ class CartItem(db.Model):
         self.unique_id  = unique_id
         self.cart_id    = cart_id
         self.misc = json.dumps(misc)
+        self.public_id = str(uuid.uuid4())
         
     def get_misc(self):
         return json.loads(self.misc)
     
-    def set_public_id(self):
-        self.public_id = get_public_id("cartitem_"+str(self.id))
-        self.save()
-        
     def to_dict(self):
-        return {
-            "id": self.public_id,
-            "unique_id": self.unique_id,
-            "cart_id": self.cart.public_id
-        }
+        if not self.deleted:
+            return {
+                "id": self.public_id,
+                "unique_id": self.unique_id,
+                "cart_id": self.cart.public_id
+            }
+        
+        return {}
+    def delete(self):
+        self.deleted = True
+        self.save()
 
     def save(self):
         db.session.add(self)

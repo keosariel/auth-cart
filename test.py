@@ -38,3 +38,9 @@ res = requests.get(f"http://127.0.0.1:5000/carts/{cart.get('id')}", headers={"Au
 print(res.text)
 
 cart = json.loads(res.text)
+
+res = requests.delete(f"http://127.0.0.1:5000/carts/{cart.get('id')}", json={"item_id":"video_id"}, headers={"Authorization":"Bearer "+user.get("token")})
+
+print(res.text)
+
+cart = json.loads(res.text)

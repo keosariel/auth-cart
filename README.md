@@ -71,13 +71,17 @@
 | ------- | ------ | -------- |
 | item_id | string | required |
 
-#### Delete cart
+#### Delete cart item
 
 **Route**: `/carts/<`string:cart_public_id `>`
 
-**Method**: `POST`
+**Method**: `Delete`
 
 **Headers** `Authorization`
+
+| Fields  | type   | required |
+| ------- | ------ | -------- |
+| item_id | string | required |
 
 ---
 

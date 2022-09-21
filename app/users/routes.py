@@ -109,9 +109,6 @@ class SignUp(Resource):
 			user.set_password(password)
 			user.save()
 
-			# Setting public ID
-			user.set_public_id()
-			
 			token = user.generate_token()
 
 			return JSONResponse(data={ 'token' : token, "user": user.to_dict() })
