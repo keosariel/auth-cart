@@ -12,8 +12,12 @@ app.config.from_object(Config)     # adding Config
 db  = SQLAlchemy(app)
 api = Api(app)
 bcrypt = Bcrypt(app)
-cors = CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 
+@app.after_request
+def add_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 from app.users import *
 from app.cart import *
