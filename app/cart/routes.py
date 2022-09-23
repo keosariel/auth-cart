@@ -37,7 +37,7 @@ class _Cart(Resource):
         if cart:
             item = CartItem(json_data.item_id, cart.id)
             item.save()
-            return JSONResponse(item.to_dict())
+            return JSONResponse(cart.to_dict())
         else:
             return JSONResponse(None, code=None, status=404)
     
