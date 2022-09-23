@@ -12,7 +12,7 @@ app.config.from_object(Config)     # adding Config
 db  = SQLAlchemy(app)
 api = Api(app)
 bcrypt = Bcrypt(app)
-cors = CORS(app, resources={r"*": {"origins": "*"}})
+cors = CORS(app, resources={r"*": {"origins": "*"}}, supports_credentials=True)
 
 
 from app.users import *
